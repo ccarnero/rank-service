@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "ranker"
+		},
+		{
+			"path": "mongodbListenner"
+		}
+	],
+	"settings": {}
+}
