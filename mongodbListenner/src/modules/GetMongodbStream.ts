@@ -51,18 +51,12 @@ const toRankPipeline = (properties: Array<string>): Array<Object> => {
         }
       }
     }
-    // ,
-    // {
-    //   $project: {
-    //     _id: 1,
-    //     objectId: { $toString: '$_id' },
-    //   }
-    // }
   ];
 }
 
 const GetMongodbStream = async (collection: string, properties: Array<string>, db: Db) => {
   const pipeline = toRankPipeline(properties);
+  console.log(JSON.stringify(pipeline, null, 2))
   return db.collection(collection).watch(pipeline);
 }
 
