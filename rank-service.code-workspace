@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "mongodbListenner"
+		},
+		{
+			"path": "container"
 		}
 	],
 	"settings": {}
