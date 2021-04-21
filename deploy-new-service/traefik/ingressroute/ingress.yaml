@@ -1,0 +1,67 @@
+###
+### INTERNAL SERVICES:
+###
+---
+
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: [new-service]-internal
+  namespace: [environment]
+  annotations:
+    kubernetes.io/ingress.class: traefik-internal
+spec:
+  entryPoints:
+    - int-web
+  routes:
+  - match: Host(`[domain]`) && PathPrefix(`/`)
+    kind: Rule
+    priority: 1
+    services:
+    - name: [new-service]
+      port: [new-service-PORT]
+
+
+###
+### EXTERNAL SERVICES:
+###
+---
+
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: [new-service]-internal-http
+  namespace: [environment]
+  annotations:
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - ext-web
+  routes:
+  - match: Host(`[domain]`) && PathPrefix(`/`)
+    kind: Rule
+    middlewares:
+    - name: redirect-https
+      namespace: [environment]
+    services:
+    - name: [new-service]
+      port: [new-service-PORT]
+
+---
+
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: [new-service]-internal-https
+  namespace: [namespace]
+  annotations:
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - ext-webs
+  routes:
+  - match: Host(`[domain]`) && PathPrefix(`/`)
+    kind: Rule
+    services:
+    - name: [new-service]
+      port: [new-service-PORT]
