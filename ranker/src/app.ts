@@ -1,4 +1,6 @@
 import redis from 'redis';
+import Run from "./modules/web/healthcheck"
+
 import { MongoClient, MongoClientOptions } from "mongodb";
 import SaveScoring from "./modules/mongo/mongodb";
 
@@ -7,10 +9,11 @@ import { taskEither as TE } from "fp-ts";
 import { calculate } from './modules/weigthCalculator/ranker';
 import { Rank } from './modules/types/rank';
 
-const MONGODB_URI: string = `${process.env.MONGODB_URI}`
-
-const REDIS_URI: string = 'redis://localhost:6379'
-const REDIS_READ_CHANNEL: string = 'ranker';
+const {
+  MONGODB_URI,
+  REDIS_URI,
+  REDIS_READ_CHANNEL 
+} = process.env;
 
 const options: MongoClientOptions = { useNewUrlParser: true, useUnifiedTopology: true }
 
@@ -21,6 +24,7 @@ const main = async () => {
 
   const subscriber = redis.createClient(REDIS_URI);
   subscriber.subscribe(REDIS_READ_CHANNEL);
+  Run();
 
   subscriber.on('connect', () => {
     console.log('connected to redis')

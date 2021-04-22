@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: [new-service]
+  name: listenner
   namespace: [environment]
   labels:
-    app: [new-service]
+    app: listenner
 spec:
   ports:
     - port: [new-service-PORT]
@@ -13,5 +13,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-      app: [new-service]
+      app: listenner
   type: ClusterIP

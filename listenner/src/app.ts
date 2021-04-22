@@ -1,28 +1,35 @@
 import { ChangeStream, MongoClient, MongoClientOptions } from "mongodb";
 import redis from 'redis';
+
 import GetMongodbStream from "./modules/GetMongodbStream";
+import Run from "./modules/healthcheck"
 
 // const CHANGES_TTL = 30000;
 // TODO: recolectar informacion del mismo objectid por una ventana de tiempo
 // esto es util cuando el candidato esta editando su perfil
 
-const uri: string = `${process.env.MONGODB_URI}`
-const options: MongoClientOptions = { useNewUrlParser: true, useUnifiedTopology: true }
+const mongodbOptions: MongoClientOptions = { useNewUrlParser: true, useUnifiedTopology: true }
 
-const toFind:Array<string> = ['lastModified', 'likeTheseOpportunities'];
-const collection:string = 'candidates';
+const {
+  MONGODB_URI = '',
+  REDIS_URI = '',
+  REDIS_PUSH_CHANNEL = ''
+} = process.env
 
-const redisUri:string = 'redis://localhost:6379'
+const toFind: Array<string> = ['lastModified', 'likeTheseOpportunities'];
+const mongodbCollection: string = 'candidates';
 
 const main = async () => {
-  const cnn:MongoClient = new MongoClient(uri, options);
+  const cnn: MongoClient = new MongoClient(MONGODB_URI, mongodbOptions);
   await cnn.connect();
 
-  const stream:ChangeStream<any> = await GetMongodbStream(collection, toFind, cnn.db())
-  const publisher = redis.createClient(redisUri);
+  const stream: ChangeStream<any> = await GetMongodbStream(mongodbCollection, toFind, cnn.db())
+  const publisher = redis.createClient(REDIS_URI);
+
+  Run();
   while (await stream.hasNext()) {
-      const { id } = await stream.next();
-      await publisher.publish(collection, id);
+    const { id } = await stream.next();
+    await publisher.publish(REDIS_PUSH_CHANNEL, id);
   }
 }
 

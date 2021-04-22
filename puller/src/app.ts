@@ -5,26 +5,28 @@ import { GetOpportunitiesForCandidate, GetCandidate } from "./modules/mongo/mong
 import { pipe } from "fp-ts/function";
 import { taskEither as TE } from "fp-ts";
 import * as A from 'fp-ts/Array'
+import Run from "./modules/web/healthcheck"
 
-const MONGODB_URI: string = `${process.env.MONGODB_URI}`
-const MONGODB_COLLECTION: string = 'candidates';
-
-const REDIS_URI: string = 'redis://localhost:6379'
-const REDIS_READ_CHANNEL: string = 'candidates';
-const REDIS_PUSH_CHANNEL: string = 'ranker';
+const {
+  MONGODB_URI,
+  MONGODB_COLLECTION,
+  REDIS_URI,
+  REDIS_READ_CHANNEL,
+  REDIS_PUSH_CHANNEL
+} = process.env
 
 const options: MongoClientOptions = { useNewUrlParser: true, useUnifiedTopology: true }
 
-const publisher = (channel:string, redisClient: RedisClient) => (
+const publisher = (channel: string, redisClient: RedisClient) => (
   message =>
-  TE.tryCatch(
-    async () => {
-      await redisClient.publish(channel, JSON.stringify(message))
-      console.log(`idCandidate: ${message.candidate.id}, idOpportunity: ${message.opportunity.id} published`)
-      return message
-    },
-    (reason) => new Error(`${reason}`),
-  )
+    TE.tryCatch(
+      async () => {
+        await redisClient.publish(channel, JSON.stringify(message))
+        console.log(`idCandidate: ${message.candidate.id}, idOpportunity: ${message.opportunity.id} published`)
+        return message
+      },
+      (reason) => new Error(`${reason}`),
+    )
 )
 
 const main = async () => {
@@ -55,10 +57,17 @@ const main = async () => {
         ),
         TE.chain(
           processAllMessages
-        ))();
+        ),
+        TE.bimap(
+          (error) => console.log({ message, error }),
+          (score) => console.error({ message, score })
+        )
+      )();
     })
   }
   );
 }
 
-main().catch(console.error);
+main()
+  .then(() => Run())
+  .catch(console.error);

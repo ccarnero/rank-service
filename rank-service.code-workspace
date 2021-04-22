@@ -4,13 +4,10 @@
 			"path": "ranker"
 		},
 		{
-			"path": "rankInfoPuller"
+			"path": "puller"
 		},
 		{
-			"path": "mongodbListenner"
-		},
-		{
-			"path": "container"
+			"path": "listenner"
 		}
 	],
 	"settings": {}

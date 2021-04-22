@@ -22,7 +22,7 @@ const getOpportunitiesForCandidate = async (candidate: Candidate, collection: st
       p[key] = value[0]
     } else {
       if (Array.isArray(value)) {
-          p[key] = value.flat()
+        p[key] = value.flat()
       }
       else { p[key] = value };
     }
@@ -30,6 +30,8 @@ const getOpportunitiesForCandidate = async (candidate: Candidate, collection: st
 
     return p;
   };
+
+  console.log(`opportunities exists: ${companies.length > 0}`)
 
   return companies
     .map(co => Object.entries(co).reduce(agg, {}))
@@ -56,17 +58,18 @@ const getCandidate = async (_idCandidate: string, collection: string, db: Db): P
 
   const projection = {
     projection: {
-      id: 1, 
-      age: 1, 
-      experience: 1, 
-      educationLevel: 1, 
-      languages: 1, 
-      professions: 1, 
-      skills: 1, 
+      id: 1,
+      age: 1,
+      experience: 1,
+      educationLevel: 1,
+      languages: 1,
+      professions: 1,
+      skills: 1,
       fieldsOfStudy: 1
     }
   }
   const cand = await dbCollection.findOne({ _id: new ObjectID(_idCandidate) }, projection);
+  console.log(`candidate exists: ${cand !== undefined}`)
   const candidate: Candidate = cand;
   return candidate;
 }
