@@ -1,0 +1,46 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: puller
+  # namespace: [environment]
+  labels:
+    app: puller
+  annotations:
+    # Container Image Automated Updates
+    flux.weave.works/automated: "true"
+    # do not apply this manifest on the cluster
+    #flux.weave.works/ignore: "true"
+    secret.reloader.stakater.com/reload: "puller"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: puller
+  template:
+    metadata:
+      labels:
+        app: puller
+    spec:
+      imagePullSecrets:
+      - name: aws-registry
+      containers:
+      - name: puller
+        image: localhost:5000/puller:0
+        imagePullPolicy: Always
+        envFrom:
+        - secretRef:
+            name: puller
+        ports:
+        - containerPort: 3001
+          name: http
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 200m
+            memory: 512Mi
+          requests:
+            cpu: 200m
+            memory: 256Mi

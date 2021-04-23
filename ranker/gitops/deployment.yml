@@ -2,39 +2,39 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: listenner
-  namespace: [environment]
+  name: ranker
+  # namespace: [environment]
   labels:
-    app: listenner
+    app: ranker
   annotations:
     # Container Image Automated Updates
     flux.weave.works/automated: "true"
     # do not apply this manifest on the cluster
     #flux.weave.works/ignore: "true"
-    secret.reloader.stakater.com/reload: "listenner"
+    secret.reloader.stakater.com/reload: "ranker"
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: listenner
+      app: ranker
   template:
     metadata:
       labels:
-        app: listenner
+        app: ranker
     spec:
       imagePullSecrets:
       - name: aws-registry
       containers:
-      - name: listenner
-        image: localhost:5000/listenner:0
+      - name: ranker
+        image: localhost:5000/ranker:0
         imagePullPolicy: Always
         envFrom:
         - secretRef:
-            name: listenner
+            name: ranker
         ports:
-        - containerPort: [new-service-PORT]
+        - containerPort: 3002
           name: http
           protocol: TCP
         resources:
