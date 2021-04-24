@@ -9,7 +9,9 @@
       "request": "launch",
       "name": "Launch Program",
       "env": {
-        "MONGODB_URI": "mongodb+srv://chris:w0rck37@production-tihwj.mongodb.net/wrckdb"
+        "MONGODB_URI": "mongodb+srv://chris:w0rck37@production-tihwj.mongodb.net/wrckdb",
+        "REDIS_URI": "redis://localhost:6379",
+        "REDIS_PUSH_CHANNEL": "candidates"
       },
       "skipFiles": [
         "<node_internals>/**"

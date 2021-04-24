@@ -6,11 +6,11 @@ const {
 
 const server = fastify()
 
-server.get('/healthcheck', async (request, reply) => {
+server.get('/listenner/healthcheck', async (request, reply) => {
   return 'pong\n'
 })
 
-const Run = () =>
+const StartHealthcheckEndpoint = () =>
   server.listen(HEALTHCHECK_PORT, (err, address) => {
     if (err) {
       console.error(err)
@@ -19,4 +19,4 @@ const Run = () =>
     console.log(`Server listening at ${address}`)
   })
 
-export default Run;
+export default StartHealthcheckEndpoint;

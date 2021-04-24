@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: listenner
+  name: candidates-listenner
   # namespace: [environment]
   labels:
     app: listenner
@@ -27,12 +27,12 @@ spec:
       imagePullSecrets:
       - name: aws-registry
       containers:
-      - name: listenner
-        image: k3d-registry.localhost:5000/listenner:latest
+      - name: candidates-listenner
+        image: k3d-rank-registry:63333/listenner:latest
         imagePullPolicy: Always
         envFrom:
         - secretRef:
-            name: listenner
+            name: candidates-listenner
         ports:
         - containerPort: 3000
           name: http
