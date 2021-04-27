@@ -1,0 +1,13 @@
+{
+  "name": "@ranker/types",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "private": true,
+  "scripts": {
+    "build": "npx tsc --build"
+  }
+}

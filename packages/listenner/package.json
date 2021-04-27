@@ -1,0 +1,11 @@
+{
+  "name": "@ranker/listenner",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "npx tsc -b",
+    "start": "node dist/app.js"
+  },
+  "dependencies": {
+    "@ranker/commons": "^1.0.0"    
+  }
+}

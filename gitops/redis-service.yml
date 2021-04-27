@@ -1,0 +1,54 @@
+# from https://github.com/GoogleCloudPlatform/microservices-demo/blob/master/kubernetes-manifests/redis.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-bus
+spec:
+  selector:
+    matchLabels:
+      app: redis-bus
+  template:
+    metadata:
+      labels:
+        app: redis-bus
+    spec:
+      containers:
+      - name: redis
+        image: redis:alpine
+        ports:
+        - containerPort: 6379
+        readinessProbe:
+          periodSeconds: 5
+          tcpSocket:
+            port: 6379
+        livenessProbe:
+          periodSeconds: 5
+          tcpSocket:
+            port: 6379
+        volumeMounts:
+        - mountPath: /data
+          name: redis-data
+        resources:
+          limits:
+            memory: 256Mi
+            cpu: 125m
+          requests:
+            cpu: 70m
+            memory: 200Mi
+      volumes:
+      - name: redis-data
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-bus
+spec:
+  type: ClusterIP
+  selector:
+    app: redis-bus
+  ports:
+  - name: redis
+    port: 6379
+    targetPort: 6379
