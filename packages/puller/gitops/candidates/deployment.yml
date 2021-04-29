@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: puller
+  name: candidates-puller
   # namespace: [environment]
   labels:
     app: puller
@@ -27,12 +27,12 @@ spec:
       imagePullSecrets:
       - name: aws-registry
       containers:
-      - name: puller
-        image: localhost:5000/puller:0
+      - name: candidates-puller
+        image: k3d-rank-registry:63333/puller:latest
         imagePullPolicy: Always
         envFrom:
         - secretRef:
-            name: puller
+            name: candidates-puller
         ports:
         - containerPort: 3001
           name: http

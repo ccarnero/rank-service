@@ -13,7 +13,7 @@ import { closeConnectionsAndExit, startHealthcheckServer } from "@ranker/commons
 const {
   MONGODB_URI = '',
   MONGODB_COLLECTION = '',
-  MONGODB_WATCH_PROPERTIES = 'lastModified,likeTheseOpportunities',
+  MONGODB_WATCH_PROPERTIES = 'testRank',
   REDIS_URI = '',
   REDIS_PUSH_CHANNEL = '',
 

@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ranker
+  name: candidates-ranker
   # namespace: [environment]
   labels:
     app: ranker
@@ -27,12 +27,12 @@ spec:
       imagePullSecrets:
       - name: aws-registry
       containers:
-      - name: ranker
-        image: localhost:5000/ranker:0
+      - name: candidates-ranker
+        image: k3d-rank-registry:63333/ranker:latest
         imagePullPolicy: Always
         envFrom:
         - secretRef:
-            name: ranker
+            name: candidates-ranker
         ports:
         - containerPort: 3002
           name: http

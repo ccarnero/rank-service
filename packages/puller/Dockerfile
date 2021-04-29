@@ -1,14 +1,9 @@
-FROM node:15-alpine AS rank-puller-builder
+# base stage: build entire solution
+FROM node:15-alpine
 WORKDIR /app
 COPY . .
-RUN npm install
+RUN yarn install --production
 RUN npm run clean
 RUN npm run build
 
-# Our Second stage, that creates an image for production
-FROM node:15-alpine AS rank-dblistenner-prod
-WORKDIR /app
-COPY --from=rank-puller-builder ./app/dist ./dist
-COPY package* ./
-RUN npm install --production
-CMD npm start
+CMD node packages/puller/dist/app.js

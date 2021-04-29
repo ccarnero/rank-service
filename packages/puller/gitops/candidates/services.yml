@@ -2,16 +2,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ranker
-  # namespace: [environment]
+  name: candidates-puller
   labels:
-    app: ranker
+    app: puller
 spec:
   ports:
-    - port: 3002
-      targetPort: 3002
+    - port: 3001
+      targetPort: 3001
       protocol: TCP
       name: http
   selector:
-      app: ranker
+      app: puller
   type: LoadBalancer
