@@ -1,0 +1,45 @@
+options:
+  docker: true
+
+pipelines:
+  branches: 
+    qa:
+      - step:
+          deployment: qa-build
+          name: Build
+          image: python:3.6
+          caches:
+            - docker
+          script:
+            - pip install --no-cache-dir awscli docker-compose
+            - docker-compose -v
+
+            - aws ecr describe-repositories --region ${AWS_DEFAULT_REGION} --repository-names qa/listenner > /dev/null 2>&1 || aws --region ${AWS_DEFAULT_REGION} ecr create-repository --repository-name qa/listenner
+            - aws ecr describe-repositories --region ${AWS_DEFAULT_REGION} --repository-names qa/puller > /dev/null 2>&1 || aws --region ${AWS_DEFAULT_REGION} ecr create-repository --repository-name qa/puller
+            - aws ecr describe-repositories --region ${AWS_DEFAULT_REGION} --repository-names qa/ranker > /dev/null 2>&1 || aws --region ${AWS_DEFAULT_REGION} ecr create-repository --repository-name qa/ranker
+
+            - $(aws ecr get-login --region ${AWS_DEFAULT_REGION} --no-include-email)
+
+            - docker-compose -f docker-compose.yml -f docker-compose.release.yml build
+            - docker-compose -f docker-compose.yml -f docker-compose.release.yml push
+
+
+    master:
+      - step:
+          deployment: production-build
+          name: Build
+          image: python:3.6
+          caches:
+            - docker
+          script:
+           - pip install --no-cache-dir awscli docker-compose
+            - docker-compose -v
+
+            - aws ecr describe-repositories --region ${AWS_DEFAULT_REGION} --repository-names production/listenner > /dev/null 2>&1 || aws --region ${AWS_DEFAULT_REGION} ecr create-repository --repository-name production/listenner
+            - aws ecr describe-repositories --region ${AWS_DEFAULT_REGION} --repository-names production/puller > /dev/null 2>&1 || aws --region ${AWS_DEFAULT_REGION} ecr create-repository --repository-name production/puller
+            - aws ecr describe-repositories --region ${AWS_DEFAULT_REGION} --repository-names production/ranker > /dev/null 2>&1 || aws --region ${AWS_DEFAULT_REGION} ecr create-repository --repository-name production/ranker
+
+definitions: 
+  services:
+    mongo: 
+      image: mongo:4.0
