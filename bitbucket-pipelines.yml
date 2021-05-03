@@ -20,8 +20,8 @@ pipelines:
 
             - $(aws ecr get-login --region ${AWS_DEFAULT_REGION} --no-include-email)
 
-            - docker-compose -f docker-compose.yml -f docker-compose.release.yml build
-            - docker-compose -f docker-compose.yml -f docker-compose.release.yml push
+            - docker-compose -f docker-compose.yml -f docker-compose-release.yml build
+            - docker-compose -f docker-compose.yml -f docker-compose-release.yml push
 
 
     master:
