@@ -3,7 +3,7 @@ options:
 
 pipelines:
   branches: 
-    qa:
+    release:
       - step:
           deployment: qa-build
           name: Build
