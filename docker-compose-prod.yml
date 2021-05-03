@@ -2,17 +2,17 @@
 version: '3.3'    
 services:
   listenner:
-    image: k3d-rank-registry.localhost:63333/listenner:latest
+    image: 333623647139.dkr.ecr.us-east-1.amazonaws.com/production/listenner:UPDATE_TAG
     build:
       context: ./
       dockerfile: ./packages/listenner/Dockerfile
   puller:
-    image: k3d-rank-registry.localhost:63333/puller:latest
+    image: 333623647139.dkr.ecr.us-east-1.amazonaws.com/production/puller:UPDATE_TAG
     build:
       context: ./
       dockerfile: ./packages/puller/Dockerfile
   ranker:
-    image: k3d-rank-registry.localhost:63333/ranker:latest
+    image: 333623647139.dkr.ecr.us-east-1.amazonaws.com/production/ranker:UPDATE_TAG
     build:
       context: ./
       dockerfile: ./packages/ranker/Dockerfile

@@ -13,6 +13,7 @@ pipelines:
           script:
             - pip install --no-cache-dir awscli docker-compose
             - docker-compose -v
+            - sed -i 's/UPDATE_TAG/$BITBUCKET_BUILD_NUMBER/g' docker-compose-release.yml
             - aws ecr describe-repositories --region ${AWS_DEFAULT_REGION} --repository-names qa/listenner > /dev/null 2>&1 || aws --region ${AWS_DEFAULT_REGION} ecr create-repository --repository-name qa/listenner
             - aws ecr describe-repositories --region ${AWS_DEFAULT_REGION} --repository-names qa/puller > /dev/null 2>&1 || aws --region ${AWS_DEFAULT_REGION} ecr create-repository --repository-name qa/puller
             - aws ecr describe-repositories --region ${AWS_DEFAULT_REGION} --repository-names qa/ranker > /dev/null 2>&1 || aws --region ${AWS_DEFAULT_REGION} ecr create-repository --repository-name qa/ranker
@@ -29,6 +30,7 @@ pipelines:
           script:
             - pip install --no-cache-dir awscli docker-compose
             - docker-compose -v
+            - sed -i 's/UPDATE_TAG/$BITBUCKET_BUILD_NUMBER/g' docker-compose-production.yml
             - aws ecr describe-repositories --region ${AWS_DEFAULT_REGION} --repository-names qa/listenner > /dev/null 2>&1 || aws --region ${AWS_DEFAULT_REGION} ecr create-repository --repository-name qa/listenner
             - aws ecr describe-repositories --region ${AWS_DEFAULT_REGION} --repository-names qa/puller > /dev/null 2>&1 || aws --region ${AWS_DEFAULT_REGION} ecr create-repository --repository-name qa/puller
             - aws ecr describe-repositories --region ${AWS_DEFAULT_REGION} --repository-names qa/ranker > /dev/null 2>&1 || aws --region ${AWS_DEFAULT_REGION} ecr create-repository --repository-name qa/ranker
