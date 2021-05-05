@@ -69,7 +69,7 @@ const main = async () => {
           processAllMessages
         ),
         TE.bimap(
-          (error) => console.error({ message, error }),
+          (error:Error) => console.error({ message, error }),
           (score) => {
             const toScore = score
               .reduce((p, c) => p.concat(`(idCandidate: ${c.candidate.id}, idOpportunity: ${c.opportunity.id})`), '');

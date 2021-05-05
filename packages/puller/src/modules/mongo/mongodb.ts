@@ -5,6 +5,8 @@ import { Candidate } from "@ranker/types";
 import { Opportunity } from "@ranker/types";
 import { Rank } from "@ranker/types";
 
+const debug = require('debug')('puller');
+
 const getOpportunitiesForCandidate = async (candidate: Candidate, collection: string, db: Db): Promise<Array<Rank>> => {
   const dbCollection = db.collection(collection);
 
@@ -33,16 +35,23 @@ const getOpportunitiesForCandidate = async (candidate: Candidate, collection: st
 
   console.log(`opportunities exists: ${companies.length > 0}`)
 
-  return companies
+  const opportunities = companies
     .map(co => Object.entries(co).reduce(agg, {}))
     // solo proceso cambios en opps
     // que tengan props que NO esten en [id/_id]
     .filter(co => Object.keys(co).length > 2)
+    .map(o => { // toma solo el level del objeto de education
+      const {educationLevel, ...opp} = o;
+      const level = educationLevel.map((el: { level: String; }) => el.level);
+      return { ...opp, educationLevel: level };
+    })
     .map(o => {
       const opportunity: Opportunity = o;
       const rank: Rank = { candidate, opportunity }
       return rank;
     });
+  debug(JSON.stringify(opportunities, null, 1));
+  return opportunities;
 }
 
 export const GetOpportunitiesForCandidate = (collection: string, db: Db) =>
