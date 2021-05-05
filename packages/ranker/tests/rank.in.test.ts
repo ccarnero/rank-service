@@ -5,7 +5,7 @@ import * as A from 'fp-ts/lib/Array'
 import { calculate } from "../src/modules/weigthCalculator/ranker"
 import { expect } from "chai"
 import { MonoidSum } from "fp-ts/lib/number"
-import { Candidate } from "../src/modules/types/candidate"
+import { Candidate } from "@ranker/types"
 
 describe('opportunity only with in fields', function() {
   const generic = {

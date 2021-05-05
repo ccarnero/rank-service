@@ -1,13 +1,11 @@
 import { pipe } from "fp-ts/lib/function"
-import { Rank } from "../src/modules/types/rank"
 import * as E  from "fp-ts/lib/Either"
 import * as A from 'fp-ts/lib/Array'
 
 import { calculate } from "../src/modules/weigthCalculator/ranker"
 import { expect } from "chai"
-import { traverse } from "fp-ts/lib/Array"
 import { MonoidSum } from "fp-ts/lib/number"
-import { Candidate } from "../src/modules/types/candidate"
+import { Candidate, Rank } from "@ranker/types"
 
 describe('generic opportunity', function() {
   const generic = {
@@ -27,7 +25,7 @@ describe('generic opportunity', function() {
 
     const candidates = [{
         id: "0",
-        age: 0,
+        age: 18,
         experience: 0,
         educationLevel: "",
         languages: [],

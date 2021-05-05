@@ -27,17 +27,18 @@ export class LimitsLengthValidationError extends Error {
 export type BetweenValidationErrors = 
   | LimitsLengthValidationError
 
-export function calculate(b:Between) {
-  return (n:number) : E.Either<Error, number> => {
-    if(!n) return E.right(0)
+export function calculate(list:Between) {
+  return (value:number) : E.Either<Error, number> => {
     // si no hay nada requeridos entonces cumple la condicion
-    if(b.limits.length === 0) return E.right(1);
+    if(list.limits.length === 0) return E.right(1);
 
-    if(b.limits.length !== 2) {
-      return E.left(LimitsLengthValidationError.of(b.limits.length))
+    if(value===undefined || value===null) return E.right(0)
+
+    if(list.limits.length !== 2) {
+      return E.left(LimitsLengthValidationError.of(list.limits.length))
     }
-    const [head, tail] = b.limits;
-    if(n >= head && n <= tail) return E.right(1);
+    const [head, tail] = list.limits;
+    if(value >= head && value <= tail) return E.right(1);
 
     return E.right(0);
   }

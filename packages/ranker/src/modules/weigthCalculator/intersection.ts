@@ -1,4 +1,5 @@
 import * as E from 'fp-ts/lib/Either';
+const debug = require('debug')('verbose')
 
 export interface Intersection<T> {
   _tag: 'Counter'
@@ -19,10 +20,10 @@ export function of<T>(values: Array<T>): Intersection<T> {
 
 export function calculate<T>(i: Intersection<T>) {
   return (n: Array<T>): E.Either<Error, number> => {
-    if(!n) return E.right(0)
-
     // si no hay nada requeridos entonces cumple la condicion
     if(i.values.length === 0) return E.right(1);
+
+    if(!n) return E.right(0)
 
     const intersection = unique(n).reduce((a, c) => {
       if (i.values.includes(c)) {
@@ -34,7 +35,7 @@ export function calculate<T>(i: Intersection<T>) {
     if(coincidences === 0) return E.right(0);
 
     const initial = i.values.length;
-
+    debug(`* intersection not 0/1: ${coincidences/initial}`)
     return E.right(coincidences/initial);
   }
 }

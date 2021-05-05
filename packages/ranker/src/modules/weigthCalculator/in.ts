@@ -9,15 +9,15 @@ export function of<T>(values: Array<T>): In<T> {
   return { _tag: 'In', values }
 }
 
-export function calculate<T>(b: In<T>) {
-  return (n: T): E.Either<Error, number> => {
-    if(!n) return E.right(0)
-
+export function calculate<T>(list: In<T>) {
+  return (value: T): E.Either<Error, number> => {
     // si no hay nada requeridos entonces cumple la condicion
-    if(b.values.length === 0) return E.right(1);
+    if(list.values.length === 0) return E.right(1);
 
-    const { values } = b;
-    if (values.includes(n)) return E.right(1);
+    if(!value) return E.right(0)
+
+    const { values } = list;
+    if (values.includes(value)) return E.right(1);
 
     return E.right(0);
   }

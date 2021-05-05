@@ -5,11 +5,11 @@ import * as A from 'fp-ts/lib/Array'
 import { calculate } from "../src/modules/weigthCalculator/ranker"
 import { expect } from "chai"
 import { MonoidSum } from "fp-ts/lib/number"
-import { Candidate } from "../src/modules/types/candidate"
+import { Candidate } from "@ranker/types"
 
 const generic = {
   id: '0',  
-  age: [0, 1],
+  age: [18, 99],
   experience: [0, 1],
   educationLevel: ['el1', 'el2'],
   languages: ['na'],
@@ -31,11 +31,11 @@ pipe(
   )
 )
 
-describe('opportunity only with intersection fields', function () {
+describe.only('opportunity only with intersection fields', function () {
   it('rank should return 1', function () {
     const candidates = [{
       id: "0",
-      age: 0,
+      age: 18,
       experience: 0,
       educationLevel: "el1",
       languages: ['na'],
