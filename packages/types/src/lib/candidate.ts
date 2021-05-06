@@ -1,8 +1,9 @@
-export type Candidate =  { 
+
+export type Candidate = {
   id: string;
   age: number;
   experience: number;
-  educationLevel: string;
+  educationLevel: number;
   languages: Array<string>;
   professions: Array<string>;
   skills: Array<string>;

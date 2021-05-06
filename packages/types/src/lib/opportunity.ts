@@ -1,8 +1,9 @@
+
 export type Opportunity = {
   id: string,
   age: Array<number>;
   experience: Array<number>;
-  educationLevel: Array<string>;
+  educationLevel: Array<number>;
   languages: Array<string>;
   professions: Array<string>;
   skills: Array<string>;

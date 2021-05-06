@@ -14,4 +14,5 @@ __exportStar(require("./lib/candidate"), exports);
 __exportStar(require("./lib/opportunity"), exports);
 __exportStar(require("./lib/properties"), exports);
 __exportStar(require("./lib/rank"), exports);
+__exportStar(require("./lib/maps"), exports);
 //# sourceMappingURL=index.js.map

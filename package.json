@@ -7,7 +7,8 @@
   ],
   "scripts": {
     "clean": "./shells/clean.sh",
-    "build": "lerna bootstrap && lerna run build --stream"
+    "build": "lerna bootstrap && lerna run build --stream",
+    "watch": "lerna run watch --stream"
   },
   "dependencies": {
     "lerna": "^3.22.1",

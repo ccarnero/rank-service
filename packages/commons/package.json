@@ -8,6 +8,7 @@
   ],
   "private": true,
   "scripts": {
-    "build": "npx tsc --build"
+    "build": "npx tsc --build",
+    "watch": "npx tsc --watch"
   }
 }

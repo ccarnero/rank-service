@@ -11,7 +11,7 @@ const generic = {
   id: '0',  
   age: [18, 99],
   experience: [0, 1],
-  educationLevel: ['el1', 'el2'],
+  educationLevel: [10, 11],
   languages: ['na'],
   professions: ['na'],
   skills: ['na'],
@@ -31,13 +31,13 @@ pipe(
   )
 )
 
-describe.only('opportunity only with intersection fields', function () {
+describe('opportunity only with intersection fields', function () {
   it('rank should return 1', function () {
     const candidates = [{
       id: "0",
       age: 18,
       experience: 0,
-      educationLevel: "el1",
+      educationLevel: 10,
       languages: ['na'],
       professions: ['na'],
       skills: ['na'],
@@ -52,7 +52,7 @@ describe.only('opportunity only with intersection fields', function () {
       id: "0",
       age: 10,
       experience: 10,
-      educationLevel: "EL9",
+      educationLevel: 9,
       languages: ['lna'],
       professions: ['pna'],
       skills: ['sna'],

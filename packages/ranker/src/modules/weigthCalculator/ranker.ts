@@ -1,5 +1,5 @@
 import * as B from './between';
-import * as IN from './in';
+import * as EL from './educationLevel';
 import * as I from './intersection';
 import * as E from 'fp-ts/lib/Either'
 import * as A from 'fp-ts/lib/Array'
@@ -18,7 +18,7 @@ const getWeight = (w: E.Either<Error, number>): E.Either<Error, number> => {
 export function calculate(x: Rank): E.Either<Error, number> {
   debug(`between -> age: opportunity = ${x.opportunity.age}, candidate = ${x.candidate.age}`);
   debug(`between -> experience: opportunity = ${x.opportunity.experience}, candidate = ${x.candidate.experience}`);
-  debug(`in -> educationLevel: opportunity = ${x.opportunity.educationLevel.join()}, candidate = ${x.candidate.educationLevel}`);
+  debug(`educationLevel -> educationLevel: opportunity = ${x.opportunity.educationLevel.join()}, candidate = ${x.candidate.educationLevel}`);
   debug(`intersection -> languages: opportunity = ${x.opportunity.languages.join()}, candidate = ${x.candidate.languages.join()}`);
   debug(`intersection -> professions: opportunity = ${x.opportunity.professions.join()}, candidate = ${x.candidate.professions.join()}`);
   debug(`intersection -> skills: opportunity = ${x.opportunity.skills.join()}, candidate = ${x.candidate.skills.join()}`);
@@ -27,7 +27,7 @@ export function calculate(x: Rank): E.Either<Error, number> {
   const values = [
     B.calculate(B.of(x.opportunity.age))(x.candidate.age),
     B.calculate(B.of(x.opportunity.experience))(x.candidate.experience),
-    IN.calculate(IN.of(x.opportunity.educationLevel))(x.candidate.educationLevel),
+    EL.calculate(EL.of(x.opportunity.educationLevel))(x.candidate.educationLevel),
     I.calculate(I.of(x.opportunity.languages))(x.candidate.languages),
     I.calculate(I.of(x.opportunity.professions))(x.candidate.professions),
     I.calculate(I.of(x.opportunity.skills))(x.candidate.skills),
