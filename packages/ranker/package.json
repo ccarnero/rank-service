@@ -2,9 +2,9 @@
   "name": "@ranker/ranker",
   "version": "1.0.0",
   "scripts": {
-    "build": "npx tsc -b",
-    "start": "node dist/app.js",
-    "test": "mocha -r ts-node/register tests/**/*.test.ts"
+    "test": "mocha -r ts-node/register tests/**/*.test.ts",
+    "build": "npx tsc -b && npm run test",
+    "start": "node dist/app.js"
   },
   "dependencies": {
     "@ranker/commons": "^1.0.0",

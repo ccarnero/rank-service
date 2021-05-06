@@ -1,6 +1,6 @@
 {
   "name": "@ranker/types",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -8,6 +8,7 @@
   ],
   "private": true,
   "scripts": {
-    "build": "npx tsc --build"
+    "build": "npx tsc --build",
+    "watch": "npx tsc --watch"
   }
 }
