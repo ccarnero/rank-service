@@ -13,7 +13,7 @@ describe('opportunity only with within fields', function() {
     age: [20, 30],
     experience: [5, 10],
     educationLevel: [],
-    languages: [],
+    languages: {},
     professions: [],
     skills: [],
     fieldsOfStudy: []
@@ -39,7 +39,7 @@ describe('opportunity only with within fields', function() {
         age: 20,
         experience: 5,
         educationLevel: 0,
-        languages: [],
+        languages: {},
         professions: [],
         skills: [],
         fieldsOfStudy: []
@@ -49,7 +49,7 @@ describe('opportunity only with within fields', function() {
         age: 25,
         experience: 7,
         educationLevel: 1,
-        languages: [],
+        languages: {},
         professions: [],
         skills: [],
         fieldsOfStudy: []
@@ -59,7 +59,7 @@ describe('opportunity only with within fields', function() {
         age: 30,
         experience: 10,
         educationLevel: 1,
-        languages: ['l1'],
+        languages: {'en': 1},
         professions: [],
         skills: [],
         fieldsOfStudy: []
@@ -74,7 +74,7 @@ describe('opportunity only with within fields', function() {
       age: 20,
       experience: 20,
       educationLevel: 0,
-      languages: [],
+      languages: {},
       professions: [],
       skills: [],
       fieldsOfStudy: []
@@ -89,7 +89,7 @@ describe('opportunity only with within fields', function() {
       age: 90,
       experience: 20,
       educationLevel: 0,
-      languages: [],
+      languages: {},
       professions: [],
       skills: [],
       fieldsOfStudy: []

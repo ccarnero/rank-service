@@ -13,7 +13,7 @@ describe('generic opportunity', function() {
     age: [],
     experience: [],
     educationLevel: [],
-    languages: [],
+    languages: {},
     professions: [],
     skills: [],
     fieldsOfStudy: []
@@ -28,7 +28,7 @@ describe('generic opportunity', function() {
         age: 18,
         experience: 0,
         educationLevel: 0,
-        languages: [],
+        languages: {},
         professions: [],
         skills: [],
         fieldsOfStudy: []
@@ -38,7 +38,7 @@ describe('generic opportunity', function() {
         age: 1,
         experience: 1,
         educationLevel: 1,
-        languages: [],
+        languages: {},
         professions: [],
         skills: [],
         fieldsOfStudy: []
@@ -48,7 +48,7 @@ describe('generic opportunity', function() {
         age: 1,
         experience: 1,
         educationLevel: 1,
-        languages: ['l1'],
+        languages: {'en':1},
         professions: [],
         skills: [],
         fieldsOfStudy: []
@@ -58,7 +58,7 @@ describe('generic opportunity', function() {
         age: 1,
         experience: 1,
         educationLevel: 1,
-        languages: ['l1'],
+        languages: {'en':1},
         professions: ['p1'],
         skills: [],
         fieldsOfStudy: []
@@ -68,7 +68,7 @@ describe('generic opportunity', function() {
         age: 1,
         experience: 1,
         educationLevel: 1,
-        languages: ['l1'],
+        languages: {'en':1},
         professions: ['p1'],
         skills: [],
         fieldsOfStudy: []
@@ -78,7 +78,7 @@ describe('generic opportunity', function() {
         age: 1,
         experience: 1,
         educationLevel: 1,
-        languages: ['l1'],
+        languages: {'en':1},
         professions: ['p1'],
         skills: ['s1'],
         fieldsOfStudy: []
@@ -88,7 +88,7 @@ describe('generic opportunity', function() {
         age: 1,
         experience: 1,
         educationLevel: 1,
-        languages: ['l1'],
+        languages: {'en':1},
         professions: ['p1'],
         skills: ['s1'],
         fieldsOfStudy: ['f1']
@@ -98,7 +98,7 @@ describe('generic opportunity', function() {
         age: 1,
         experience: 1,
         educationLevel: 1,
-        languages: ['l1', 'l2'],
+        languages: {'en':1, 'fra':2},
         professions: ['p1', 'p2'],
         skills: ['s1', 's2'],
         fieldsOfStudy: ['f1', 'f2']

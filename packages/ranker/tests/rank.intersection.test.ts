@@ -12,7 +12,7 @@ const generic = {
   age: [18, 99],
   experience: [0, 1],
   educationLevel: [10, 11],
-  languages: ['na'],
+  languages: {'en':1},
   professions: ['na'],
   skills: ['na'],
   fieldsOfStudy: ['na']
@@ -38,7 +38,7 @@ describe('opportunity only with intersection fields', function () {
       age: 18,
       experience: 0,
       educationLevel: 10,
-      languages: ['na'],
+      languages: {'en': 10},
       professions: ['na'],
       skills: ['na'],
       fieldsOfStudy: ['na']
@@ -53,7 +53,7 @@ describe('opportunity only with intersection fields', function () {
       age: 10,
       experience: 10,
       educationLevel: 9,
-      languages: ['lna'],
+      languages: {},
       professions: ['pna'],
       skills: ['sna'],
       fieldsOfStudy: ['fna']
