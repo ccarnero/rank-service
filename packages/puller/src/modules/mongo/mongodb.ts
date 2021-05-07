@@ -3,7 +3,7 @@ import { taskEither } from "fp-ts";
 import { belongsToRankedCompany } from "./aggregations";
 import { Candidate, Opportunity, Rank, EducationLevelMap } from "@ranker/types";
 
-const debug = require('debug')('puller');
+const debug = require('debug')('verbose');
 
 const getOpportunitiesForCandidate = async (candidate: Candidate, collection: string, db: Db): Promise<Array<Rank>> => {
   const dbCollection = db.collection(collection);
