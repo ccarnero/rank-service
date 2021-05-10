@@ -12,7 +12,7 @@ const detailed = {
   age: [18, 45],
   experience: [2, 10],
   educationLevel: [1, 2],
-  languages: ['en', 'spa'],
+  languages: {'en' : 1, 'spa' : 1},
   professions: ['a', 'b', 'c'],
   skills: ['1', '2', '3', '4'],
   fieldsOfStudy: ['f1', 'f2', 'f3', 'f4']
@@ -38,7 +38,7 @@ describe('detailed opportunity', function() {
         age: 18,
         experience: 2,
         educationLevel: 1,
-        languages: ['en', 'spa'],
+        languages: {'en' : 1, 'spa' : 1},
         professions: ['a', 'b', 'c'],
         skills: ['1', '2', '3', '4'],
         fieldsOfStudy: ['f1', 'f2', 'f3', 'f4']
@@ -48,7 +48,7 @@ describe('detailed opportunity', function() {
         age: 30,
         experience: 3,
         educationLevel: 1,
-        languages: ['en', 'spa'],
+        languages: {'en' : 1, 'spa' : 1},
         professions: ['a', 'b', 'c'],
         skills: ['1', '2', '3', '4'],
         fieldsOfStudy: ['f1', 'f2', 'f3', 'f4']
@@ -58,7 +58,7 @@ describe('detailed opportunity', function() {
         age: 45,
         experience: 10,
         educationLevel: 1,
-        languages: ['en', 'spa'],
+        languages: {'en' : 1, 'spa' : 1},
         professions: ['a', 'b', 'c'],
         skills: ['1', '2', '3', '4'],
         fieldsOfStudy: ['f1', 'f2', 'f3', 'f4']
@@ -72,7 +72,7 @@ describe('detailed opportunity', function() {
         age: 50,
         experience: 2,
         educationLevel: 1,
-        languages: ['en', 'spa'],
+        languages: {'en' : 1, 'spa' : 1},
         professions: ['a', 'b', 'c'],
         skills: ['1', '2', '3', '4'],
         fieldsOfStudy: ['f1', 'f2', 'f3', 'f4']
@@ -87,7 +87,7 @@ describe('detailed opportunity', function() {
         age: 50,
         experience: 0,
         educationLevel: 1,
-        languages: ['en', 'spa'],
+        languages: {'en' : 1, 'spa' : 1},
         professions: ['a', 'b', 'c'],
         skills: ['1', '2', '3', '4'],
         fieldsOfStudy: ['f1', 'f2', 'f3', 'f4']
@@ -102,7 +102,7 @@ describe('detailed opportunity', function() {
         age: 50,
         experience: 0,
         educationLevel: 0,
-        languages: ['en', 'spa'],
+        languages: {'en' : 1, 'spa' : 1},
         professions: ['a', 'b', 'c'],
         skills: ['1', '2', '3', '4'],
         fieldsOfStudy: ['f1', 'f2', 'f3', 'f4']

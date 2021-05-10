@@ -5,6 +5,11 @@ import { Candidate, Opportunity, Rank, EducationLevelMap } from "@ranker/types";
 
 const debug = require('debug')('verbose');
 
+const getLanguages = (languages: { map: (arg0: (l: { name: String; level: Number; }) => { name: String; level: Number; }) => Record<string, number>; }): Record<string, number> =>
+  languages.map(
+    (l: { name: String; level: Number; }) => ({ name: l.name, level: l.level })
+  )
+
 const getOpportunitiesForCandidate = async (candidate: Candidate, collection: string, db: Db): Promise<Array<Rank>> => {
   const dbCollection = db.collection(collection);
 
@@ -39,9 +44,11 @@ const getOpportunitiesForCandidate = async (candidate: Candidate, collection: st
     // que tengan props que NO esten en [id/_id]
     .filter(co => Object.keys(co).length > 2)
     .map(mongoOpportunityItem => { // toma solo el level del objeto de education
-      const { educationLevel, ...mongoOpportunity } = mongoOpportunityItem;
+      const { educationLevel, languages, ...mongoOpportunity } = mongoOpportunityItem;
       const levels = educationLevel.map((el: { level: string; }) => EducationLevelMap[el.level]);
-      const opportunity: Opportunity = { ...mongoOpportunity, educationLevel: levels };
+      const langs = getLanguages(languages);
+
+      const opportunity: Opportunity = { ...mongoOpportunity, languages: langs, educationLevel: levels };
       return opportunity;
     })
     .map(o => {
@@ -77,12 +84,21 @@ const getCandidate = async (_idCandidate: string, collection: string, db: Db): P
     }
   }
   const {
-    educationLevel, ...rest
+    educationLevel, languages, ...rest
   } = await dbCollection.findOne({ _id: new ObjectID(_idCandidate) }, projection);
   debug(`candidate exists: ${rest !== undefined}`)
-  const educationLevelValue:number = EducationLevelMap[educationLevel]
 
-  const candidate: Candidate = { educationLevel: educationLevelValue, ...rest};
+  // const langs: Record<string, number> = languages.map(
+  //   ( l: { name: String; level: Number; }) => ({ name: l.name, level: l.level })
+  // )
+  const langs = getLanguages(languages);
+  debug(langs);
+  const educationLevelValue: number = EducationLevelMap[educationLevel]
+  const candidate: Candidate = {
+    educationLevel: educationLevelValue,
+    languages: langs,
+    ...rest
+  };
   return candidate;
 }
 
