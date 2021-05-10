@@ -4,7 +4,7 @@ kind: Service
 metadata:
   name: candidates-listenner
   labels:
-    app: listenner
+    app: candidates-listenner
 spec:
   ports:
     - port: 3000
@@ -12,5 +12,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-      app: listenner
-  type: LoadBalancer
+      app: candidates-listenner
+  type: ClusterIP

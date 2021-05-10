@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "scripts": {
     "test": "mocha -r ts-node/register tests/**/*.test.ts",
-    "build": "npx tsc -b && npm run test",
-    "start": "node dist/app.js"
+    "build": "npx tsc -b",
+    "start": "node dist/app.js",
+    "watch": "npx tsc --watch"
   },
   "dependencies": {
     "@ranker/commons": "^1.0.0",
-    "@ranker/types": "^1.0.0"
+    "@ranker/types": "^1.0.1"
   }
 }

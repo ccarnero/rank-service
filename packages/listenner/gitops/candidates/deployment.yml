@@ -5,24 +5,24 @@ metadata:
   name: candidates-listenner
   # namespace: [environment]
   labels:
-    app: listenner
+    app: candidates-listenner
   annotations:
     # Container Image Automated Updates
     flux.weave.works/automated: "true"
     # do not apply this manifest on the cluster
     #flux.weave.works/ignore: "true"
-    secret.reloader.stakater.com/reload: "listenner"
+    secret.reloader.stakater.com/reload: "candidates-listenner"
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: listenner
+      app: candidates-listenner
   template:
     metadata:
       labels:
-        app: listenner
+        app: candidates-listenner
     spec:
       imagePullSecrets:
       - name: aws-registry
