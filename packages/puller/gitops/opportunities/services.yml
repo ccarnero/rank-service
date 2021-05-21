@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: candidates-puller
+  name: opportunities-puller
   labels:
-    app: candidates-puller
+    app: opportunities-puller
 spec:
   ports:
     - port: 3000
@@ -12,5 +12,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-      app: puller
+      app: opportunities-puller
   type: ClusterIP

@@ -2,39 +2,39 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: candidates-ranker
+  name: opportunities-puller
   # namespace: [environment]
   labels:
-    app: ranker
+    app: opportunities-puller
   annotations:
     # Container Image Automated Updates
     flux.weave.works/automated: "true"
     # do not apply this manifest on the cluster
     #flux.weave.works/ignore: "true"
-    secret.reloader.stakater.com/reload: "ranker"
+    secret.reloader.stakater.com/reload: "opportunities-puller"
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: ranker
+      app: opportunities-puller
   template:
     metadata:
       labels:
-        app: ranker
+        app: opportunities-puller
     spec:
       imagePullSecrets:
       - name: aws-registry
       containers:
-      - name: candidates-ranker
-        image: k3d-rank-registry:63333/ranker:latest
+      - name: opportunities-puller
+        image: k3d-rank-registry:63333/puller:latest
         imagePullPolicy: Always
         envFrom:
         - secretRef:
-            name: candidates-ranker
+            name: opportunities-puller
         ports:
-        - containerPort: 3002
+        - containerPort: 3000
           name: http
           protocol: TCP
         resources:

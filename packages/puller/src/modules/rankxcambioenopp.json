@@ -1,0 +1,43 @@
+[
+  {
+    "candidate": {
+      "id": "b50c6f22-03f6-4d38-9ca2-575f668d15c1",
+      "experience": 5,
+      "professions": [
+        "marketing"
+      ],
+      "skills": [
+        "Administración de la producción",
+        "Aprovisionamiento"
+      ],
+      "fieldsOfStudy": [],
+      "languages": [
+        {
+          "name": "en",
+          "level": 5
+        }
+      ],
+      "educationLevel": 6
+    },
+    "opportunity": {
+      "languages": [
+        {
+          "name": "en",
+          "level": 5
+        }
+      ],
+      "_id": "604fae54a9d50300095ee415",
+      "professions": [],
+      "id": "773db282-6671-4574-97ac-041b5fd0cf81",
+      "fieldsOfStudy": [],
+      "experience": [
+        0.5,
+        10
+      ],
+      "skills": [
+        "Administración de la producción",
+        "Aprovisionamiento"
+      ]
+    }
+  }
+]

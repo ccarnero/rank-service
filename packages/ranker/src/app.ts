@@ -2,6 +2,8 @@ import redis from 'redis';
 
 import { MongoClient, MongoClientOptions } from "mongodb";
 
+const debug = require('debug')('verbose')
+
 import { pipe } from "fp-ts/function";
 import { taskEither as TE } from "fp-ts";
 import { Rank } from "@ranker/types";
@@ -29,12 +31,12 @@ const main = async () => {
   startHealthcheckServer();
 
   subscriber.on('connect', () => {
-    console.log(`
-    connected to redis ${REDIS_URI}.
-    * read: ${REDIS_READ_CHANNEL},
-    * db: ${MONGODB_URI.substring(0,10)}`);
+    debug(`connected to redis ${REDIS_URI}.
+      * read: ${REDIS_READ_CHANNEL},
+      * db: ${MONGODB_URI.substring(0,10)}`);
 
     subscriber.on('message', async (_redisChannel: string, message: string) => {
+      debug(`Message received: ${JSON.stringify(message)}`);
       const rank:Rank = JSON.parse(message);
       const {
         candidate: {

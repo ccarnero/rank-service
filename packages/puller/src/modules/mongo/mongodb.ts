@@ -1,6 +1,6 @@
 import { Db, ObjectID } from "mongodb";
 import { taskEither } from "fp-ts";
-import { belongsToRankedCompany } from "./aggregations";
+import { opportunitiesForCandidate } from "./aggregations";
 import { Candidate, Opportunity, Rank, EducationLevelMap } from "@ranker/types";
 
 const debug = require('debug')('verbose');
@@ -13,8 +13,8 @@ const getLanguages = (languages: { map: (arg0: (l: { name: String; level: Number
 const getOpportunitiesForCandidate = async (candidate: Candidate, collection: string, db: Db): Promise<Array<Rank>> => {
   const dbCollection = db.collection(collection);
 
-  const belongsToRankedCompanyPipe = belongsToRankedCompany(candidate.id);
-  const companies = await dbCollection.aggregate(belongsToRankedCompanyPipe).toArray();
+  const oppsForCandidate = opportunitiesForCandidate(candidate.id);
+  const companies = await dbCollection.aggregate(oppsForCandidate).toArray();
 
   const agg = (p: any, c: Array<any>) => {
     const [key, value] = c;

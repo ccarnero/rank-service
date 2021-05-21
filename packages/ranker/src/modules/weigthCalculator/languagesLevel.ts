@@ -20,41 +20,43 @@ export function calculate(languagesLevels: LanguageLevel) {
   return (level: Record<string, number>): E.Either<Error, number> => {
     const { values: opportunityValues } = languagesLevels;
 
-    const toArray = theRecord => R.collect((k: string, v: number) => ({ k, v }))(theRecord);
-    const opportunityLanguage = toArray(opportunityValues)
-    const candidateLanguage = toArray(level)
+    const toArray = theRecord => R.collect((_k: string, v: number) => (v))(theRecord);
+    const opportunityLanguageArray = toArray(opportunityValues)
+    const candidateLanguageArray = toArray(level)
 
     // si no hay nada requeridos entonces cumple la condicion
-    if (opportunityLanguage.length === 0) return E.right(1);
+    if (opportunityLanguageArray.length === 0) return E.right(1);
 
-    if (candidateLanguage.length === 0) return E.right(0)
+    if (candidateLanguageArray.length === 0) return E.right(0)
 
-    debug(`languages, candidate: ${JSON.stringify(candidateLanguage)}`);
-    debug(`languages, opportunity: ${JSON.stringify(opportunityLanguage)}`);
+    debug(`languages, candidate: ${JSON.stringify(candidateLanguageArray)}`);
+    debug(`languages, opportunity: ${JSON.stringify(opportunityLanguageArray)}`);
 
-    const getWeight = (candidate: any) => {
+    const getWeight = (candidateLanguages: any) => {
       const level = pipe(
-        L.findFirst((x: any) => x.k === candidate.k)(opportunityLanguage),
+        L.findFirst((x: any) => {
+          return x.name === candidateLanguages.name
+        })(opportunityLanguageArray),
         O.map(r => {
           debug(`languages, found : ${JSON.stringify(r)}`);
-          return r.v
+          return r.level
         }),
         O.getOrElse(() => 0)
       );
 
       const result = (level === 0) ? 0 // no encontre el lenguaje 
-        : (candidate.v >= level) ? 1 // encontre y el level es mayor o igual al requerido
+        : (candidateLanguages.level >= level) ? 1 // encontre y el level es mayor o igual al requerido
           : 0.25; // encontre el lenguaje pero el nivel es menor
       
-      debug(`languages, result : ${result}`);
+      debug(`language weight: ${result}`);
       return result;
     };
 
     const weight = pipe(
-      candidateLanguage,
+      candidateLanguageArray,
       L.foldMap(MonoidSum)(getWeight)
     )
 
-    return E.right(weight / opportunityLanguage.length);
+    return E.right(weight / opportunityLanguageArray.length);
   }
 }

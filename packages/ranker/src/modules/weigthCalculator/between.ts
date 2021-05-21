@@ -30,7 +30,7 @@ export type BetweenValidationErrors =
 export function calculate(list:Between) {
   return (value:number) : E.Either<Error, number> => {
     // si no hay nada requeridos entonces cumple la condicion
-    if(list.limits.length === 0) return E.right(1);
+    if(!list || !list.limits || list.limits.length === 0) return E.right(1);
 
     if(value===undefined || value===null) return E.right(0)
 
