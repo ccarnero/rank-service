@@ -2,7 +2,7 @@ options:
   docker: true
 
 pipelines:
-  branches: 
+  branches:
     release:
       - step:
           deployment: qa-build
@@ -18,6 +18,8 @@ pipelines:
             - aws ecr describe-repositories --region ${AWS_DEFAULT_REGION} --repository-names qa/puller > /dev/null 2>&1 || aws --region ${AWS_DEFAULT_REGION} ecr create-repository --repository-name qa/puller
             - aws ecr describe-repositories --region ${AWS_DEFAULT_REGION} --repository-names qa/ranker > /dev/null 2>&1 || aws --region ${AWS_DEFAULT_REGION} ecr create-repository --repository-name qa/ranker
             - $(aws ecr get-login --region ${AWS_DEFAULT_REGION} --no-include-email)
+            - npm run clean
+            - npm run build
             - docker-compose -f docker-compose.yml -f docker-compose-release.yml build
             - docker-compose -f docker-compose.yml -f docker-compose-release.yml push
     master:
@@ -35,5 +37,7 @@ pipelines:
             - aws ecr describe-repositories --region ${AWS_DEFAULT_REGION} --repository-names qa/puller > /dev/null 2>&1 || aws --region ${AWS_DEFAULT_REGION} ecr create-repository --repository-name qa/puller
             - aws ecr describe-repositories --region ${AWS_DEFAULT_REGION} --repository-names qa/ranker > /dev/null 2>&1 || aws --region ${AWS_DEFAULT_REGION} ecr create-repository --repository-name qa/ranker
             - $(aws ecr get-login --region ${AWS_DEFAULT_REGION} --no-include-email)
+            - npm run clean
+            - npm run build
             - docker-compose -f docker-compose.yml -f docker-compose-production.yml build
             - docker-compose -f docker-compose.yml -f docker-compose-production.yml push
