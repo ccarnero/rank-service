@@ -72,6 +72,16 @@ Como lo muestra la configuracion, listenner y puller deben ser configurados para
 
 [el siguiente diagrama muestra cual es el deployment](https://docs.google.com/drawings/d/1pjgPm0DxWJIIcslw2aX4SvNESYhvPJApu2zsKwrg_xc/edit?usp=sharing)
 
+La secuencia esta definida con numeros en el diagrama, siempre es la siguiente:
+
+1. **Listenner** "escucha" los cambios en una coleccion
+2. Deja el mensaje en una cola para que lo tome **Puller**
+3. **Puller** ejecuta la consulta para traer los datos para generar la informacion con la que se procesa el ranking
+5. **Puller** deposita el mensaje en la queue de **Ranker**
+6. **Ranker** toma el mensaje y aplica la logica descripta anteriormente
+7. **Ranker** actualiza la coleccion *candidateOpportunityScoring*
+
+
 # ANEXO
 # Config Monorepo
 
