@@ -39,7 +39,8 @@ export function calculate(languagesLevels: LanguageLevel) {
         })(opportunityLanguageArray),
         O.map(r => {
           debug(`languages, found : ${JSON.stringify(r)}`);
-          return r.level
+          // return r.level
+          return 1
         }),
         O.getOrElse(() => 0)
       );

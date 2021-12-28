@@ -1,0 +1,48 @@
+
+# version_settings() enforces a minimum Tilt version
+# https://docs.tilt.dev/api.html#api.version_settings
+version_settings(constraint='>=0.22.2')
+
+load('ext://helm_remote', 'helm_remote')
+
+local_resource (
+  'clean',
+  'yarn clean',
+  deps=['package.json']
+)
+
+local_resource (
+  'build',
+  'yarn build',
+  deps=['package.json']
+)
+
+helm_remote(
+  'redis', 
+  repo_name='Bitnami',
+  repo_url='https://charts.bitnami.com/bitnami',
+  set = ['architecture=standalone', 'persistence.enabled=false', 'auth.enabled=false'],
+)
+if not os.path.exists('./.helm/redis'):
+  fail('redis failed to load in the right directory')
+k8s_resource('redis-master', port_forwards='6379:6379')
+
+helm_remote(
+  'mongodb', 
+  repo_name='Bitnami',
+  repo_url='https://charts.bitnami.com/bitnami',
+  set = ['auth.enabled=false', 'architecture=replicaset'],
+)
+if not os.path.exists('./.helm/Bitnami/latest/mongodb'):
+  fail('mongodb failed to load in the right directory')
+k8s_resource('mongodb', port_forwards='27017:27017')
+
+# https://docs.tilt.dev/api.html#api.docker_build
+# https://docs.tilt.dev/live_update_reference.html
+docker_build(
+    'ranker/listenner',
+    context='../',
+    dockerfile='./listenner.dockerfile'
+)
+k8s_yaml('./listenner.yaml')
+k8s_resource('candidates-listenner', resource_deps=['mongodb'], port_forwards='3000:3000')

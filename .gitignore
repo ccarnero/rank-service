@@ -40,3 +40,8 @@ dist/**/*
 # ignore yarn.lock
 yarn.lock
 *.tsbuildinfo
+
+dist
+.helm
+tilt_modules
+

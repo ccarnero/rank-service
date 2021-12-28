@@ -7,7 +7,7 @@ exports.startHealthcheckServer = void 0;
 const fastify_1 = __importDefault(require("fastify"));
 const { HEALTHCHECK_PORT = 3000 } = process.env;
 const startHealthcheckServer = async () => {
-    const server = fastify_1.default();
+    const server = (0, fastify_1.default)();
     server.get('/healthcheck', async (request, reply) => 'pong\n');
     server.listen(HEALTHCHECK_PORT, (err, address) => {
         if (err) {
