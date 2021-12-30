@@ -1,3 +1,3 @@
 export { closeConnectionsAndExit } from "./lib/shutdown";
-export { startHealthcheckServer } from "./lib/healthcheck";
+export { startHealthcheckServer, stopHealthcheckServer } from "./lib/healthcheck";
 //# sourceMappingURL=index.d.ts.map

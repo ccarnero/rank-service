@@ -8,13 +8,15 @@ load('ext://helm_remote', 'helm_remote')
 local_resource (
   'clean',
   'yarn clean',
-  deps=['package.json']
+  deps=['package.json'],
+  labels=["local-scripts"]
 )
 
 local_resource (
   'build',
-  'yarn build',
-  deps=['package.json']
+  'yarn install && yarn build',
+  deps=['package.json'],
+  labels=["local-scripts"]
 )
 
 helm_remote(
@@ -25,24 +27,70 @@ helm_remote(
 )
 if not os.path.exists('./.helm/redis'):
   fail('redis failed to load in the right directory')
-k8s_resource('redis-master', port_forwards='6379:6379')
+k8s_resource('redis-master', port_forwards='6379:6379', labels=["clusters"])
 
 helm_remote(
   'mongodb', 
   repo_name='Bitnami',
   repo_url='https://charts.bitnami.com/bitnami',
-  set = ['auth.enabled=false', 'architecture=replicaset'],
+  set = [
+    'persistence.enabled=false',
+    'auth.enabled=false', 
+    'arbiter.enabled=false',
+    'architecture=replicaset'
+  ]
+  #values= ['mongodb_values.yml']
 )
 if not os.path.exists('./.helm/Bitnami/latest/mongodb'):
   fail('mongodb failed to load in the right directory')
-k8s_resource('mongodb', port_forwards='27017:27017')
+k8s_resource('mongodb', port_forwards='27017:27017', labels=["clusters"])
+# k8s_resource('mongodb-arbiter-headless', labels=["clusters"])
 
 # https://docs.tilt.dev/api.html#api.docker_build
 # https://docs.tilt.dev/live_update_reference.html
 docker_build(
     'ranker/listenner',
     context='../',
-    dockerfile='./listenner.dockerfile'
+    dockerfile='./listenner.dockerfile',
+    live_update=[
+      sync('../packages/listenner', '/app/packages/listenner'),
+      run('yarn clean && yarn build', trigger='../packages/listenner'),
+  ]
 )
 k8s_yaml('./listenner.yaml')
-k8s_resource('candidates-listenner', resource_deps=['mongodb'], port_forwards='3000:3000')
+k8s_resource('candidates-listenner', 
+  resource_deps=['mongodb', 'redis-master'], 
+  port_forwards='3000:3000',
+  labels=['application']
+)
+
+# docker_build(
+#     'ranker/puller',
+#     context='../',
+#     dockerfile='./puller.dockerfile',
+#     live_update=[
+#       sync('../packages/puller', '/app/packages/puller'),
+#       run('yarn clean && yarn build', trigger='../packages/puller'),
+#   ]
+# )
+# k8s_yaml('./puller.yaml')
+# k8s_resource('candidates-puller', 
+#   resource_deps=['mongodb', 'redis-master'], 
+#   port_forwards='3001:3000',
+#   labels=['application']
+# )
+
+# docker_build(
+#     'ranker/ranker',
+#     context='../',
+#     dockerfile='./ranker.dockerfile',
+#     live_update=[
+#       run('cd ../ && yarn clean && yarn build', trigger='../packages/ranker'),
+#   ]
+# )
+# k8s_yaml('./ranker.yaml')
+# k8s_resource('candidates-ranker', 
+#   resource_deps=['mongodb', 'redis-master', 'candidates-listenner', 'candidates-puller'], 
+#   port_forwards='3002:3000',
+#   labels=['application']
+# )

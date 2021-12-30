@@ -7,5 +7,5 @@ RUN yarn install
 EXPOSE 3000
 ENV PATH="${PATH}:./node_modules/.bin"
 
-CMD ts-node packages/listenner/src/app.ts
+CMD ts-node packages/puller/src/app.ts
 

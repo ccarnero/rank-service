@@ -1,5 +1,5 @@
 # base stage: build entire solution
-FROM node:14-alpine
+FROM node:15-alpine
 WORKDIR /app
 COPY . .
 RUN yarn install
@@ -7,5 +7,5 @@ RUN yarn install
 EXPOSE 3000
 ENV PATH="${PATH}:./node_modules/.bin"
 
-CMD ts-node packages/listenner/src/app.ts
+CMD nodemon --exec "ts-node packages/ranker/src/app.ts"
 

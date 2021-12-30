@@ -1,0 +1,12 @@
+readinessProbe:
+  enabled: false
+  exec:
+    command:
+    - mongo
+    - --eval
+    - db.adminCommand('ping')
+  periodSeconds: 15
+  initialDelaySeconds: 60
+  timeoutSeconds: 5
+  failureThreshold: 6
+  successThreshold: 1 
