@@ -44,26 +44,27 @@ helm_remote(
 if not os.path.exists('./.helm/Bitnami/latest/mongodb'):
   fail('mongodb failed to load in the right directory')
 k8s_resource('mongodb', port_forwards='27017:27017', labels=["clusters"])
-# k8s_resource('mongodb-arbiter-headless', labels=["clusters"])
 
-# https://docs.tilt.dev/api.html#api.docker_build
-# https://docs.tilt.dev/live_update_reference.html
-docker_build(
-    'ranker/listenner',
-    context='../',
-    dockerfile='./listenner.dockerfile',
-    live_update=[
-      sync('../packages/listenner', '/app/packages/listenner'),
-      run('yarn clean && yarn build', trigger='../packages/listenner'),
-  ]
-)
-k8s_yaml('./listenner.yaml')
-k8s_resource('candidates-listenner', 
-  resource_deps=['mongodb', 'redis-master'], 
-  port_forwards='3000:3000',
-  labels=['application']
-)
+def docker_build_service(name):  
+  # https://docs.tilt.dev/api.html#api.docker_build
+  # https://docs.tilt.dev/live_update_reference.html
+  docker_build(
+      'ranker/' + name,
+      context='../',
+      dockerfile='./' + name + '.dockerfile',
+      live_update=[
+        sync('../packages/' + name, '/app/packages/' + name),
+        run('yarn clean && yarn build', trigger='../packages/' + name),
+    ]
+  )
+  k8s_yaml('./' + name + '.yaml')
+  k8s_resource('candidates-' + name, 
+    resource_deps=['mongodb', 'redis-master'], 
+    port_forwards='3000:3000',
+    labels=['application']
+  )
 
+[docker_build_service(name) for name in ['listenner']]
 # docker_build(
 #     'ranker/puller',
 #     context='../',
