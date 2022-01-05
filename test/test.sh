@@ -6,8 +6,8 @@ set -ex
 cd $(dirname $(dirname $0))
 
 echo "Testing 0-base"
-tilt ci --file 0-base/Tiltfile
-tilt down --file 0-base/Tiltfile
+tilt ci --file Tiltfile
+tilt down --file Tiltfile
 
 # echo "Testing 1-measured"
 # tilt ci --file 1-measured/Tiltfile
