@@ -3,7 +3,7 @@
 set -ex
 
 # cd to the root of the repo.
-# cd $(dirname $(dirname $0))
+cd ../deploy
 
 echo "Testing 0-base"
 tilt ci --file Tiltfile
