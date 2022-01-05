@@ -3,6 +3,7 @@
 set -ex
 
 # cd to the root of the repo.
+ls -l ../
 cd ../deploy
 
 echo "Testing 0-base"
