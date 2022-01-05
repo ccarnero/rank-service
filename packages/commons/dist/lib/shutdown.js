@@ -9,7 +9,7 @@ const closeConnectionsAndExit = async (redis, mongo) => {
         console.error('MongoDb connection closed.');
     }
     if (redis && redis.connected) {
-        const closeRedis = util_1.promisify(redis.quit).bind(redis);
+        const closeRedis = (0, util_1.promisify)(redis.quit).bind(redis);
         console.error('Redis connected...');
         await closeRedis();
         console.error('Redis connection closed.');

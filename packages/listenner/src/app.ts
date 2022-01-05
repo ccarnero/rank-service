@@ -4,7 +4,8 @@ import GetMongodbStream from "./modules/GetMongodbStream";
 
 import getRedisClient from "./modules/redis";
 
-import { closeConnectionsAndExit, startHealthcheckServer } from "@ranker/commons";
+import { closeConnectionsAndExit, startHealthcheckServer, stopHealthcheckServer } from "@ranker/commons";
+
 
 // const CHANGES_TTL = 30000;
 // TODO: recolectar informacion del mismo objectid por una ventana de tiempo
@@ -25,19 +26,13 @@ const mongodbOptions: MongoClientOptions = { useNewUrlParser: true, useUnifiedTo
 const mongoClient: MongoClient = new MongoClient(MONGODB_URI, mongodbOptions);
 const redisClient = getRedisClient(REDIS_URI);
 
-const main = async () => {
+const getMongoCollectionStream = async () => {
+  console.log(JSON.stringify(process.env, null,2));
+
   await mongoClient.connect();
   const stream: ChangeStream<any> = await GetMongodbStream(MONGODB_COLLECTION, toFind, mongoClient.db())
-  console.log(`
-    connected to mongodb stream.
-    * db: ${MONGODB_URI.substring(0,10)}, 
-    * collection: ${MONGODB_COLLECTION},
-    * watch: ${MONGODB_WATCH_PROPERTIES},
-    * redis: ${REDIS_URI},
-    * push: ${REDIS_PUSH_CHANNEL}`);
+  console.log(`connected to mongodb stream.`);
   
-  startHealthcheckServer()
-
   while (await stream.hasNext()) {
     const { id } = await stream.next();
     console.log(`got message: ${id}`);
@@ -46,8 +41,11 @@ const main = async () => {
   }
 }
 
-main()
-  .catch(error => {
+startHealthcheckServer()
+  .then(getMongoCollectionStream)
+  .catch(async (error:Error) => {
     console.error(`Error: ${error.message}`);
     closeConnectionsAndExit(redisClient, mongoClient);
+    await stopHealthcheckServer();
+    process.exit(2);
   });

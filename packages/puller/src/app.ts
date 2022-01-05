@@ -5,7 +5,7 @@ import { pipe } from "fp-ts/function";
 import { taskEither as TE } from "fp-ts";
 import * as A from 'fp-ts/Array'
 
-import { closeConnectionsAndExit, startHealthcheckServer } from "@ranker/commons";
+import { closeConnectionsAndExit, startHealthcheckServer, stopHealthcheckServer } from "@ranker/commons";
 import { Rank } from "@ranker/types"
 import { getCandidatesFromCandidate, getCandidatesFromOpportunity, getOpportuniesFromOpportunity, getOpportunitiesFromCandidate, getRankTupleList, isCandidate } from './modules/rankFactory';
 
@@ -31,14 +31,16 @@ const publisher = (channel: string, redisClient: RedisClient) => (
     )
 )
 
+let mongoClient: MongoClient;
+let subscriberClient:RedisClient, publisherClient:RedisClient;
 
 const main = async () => {
-  const cnn: MongoClient = new MongoClient(MONGODB_URI, options);
-  await cnn.connect();
+  mongoClient = new MongoClient(MONGODB_URI, options);
+  await mongoClient.connect();
 
   debug(`===> isCandidate: ${isCandidate()}`)
-  const candidatesPull = isCandidate() ? getCandidatesFromCandidate(cnn.db()) : getCandidatesFromOpportunity(cnn.db())
-  const opportunitiesPull = isCandidate() ? getOpportunitiesFromCandidate(cnn.db()) : getOpportuniesFromOpportunity(cnn.db())
+  const candidatesPull = isCandidate() ? getCandidatesFromCandidate(mongoClient.db()) : getCandidatesFromOpportunity(mongoClient.db())
+  const opportunitiesPull = isCandidate() ? getOpportunitiesFromCandidate(mongoClient.db()) : getOpportuniesFromOpportunity(mongoClient.db())
   const getRankTupleListFromDb = getRankTupleList(candidatesPull)(opportunitiesPull);
 
   const publisherClient = redis.createClient(REDIS_URI);
@@ -49,11 +51,8 @@ const main = async () => {
     A.map(publishToRanker),
     TE.sequenceArray
   )
-
-  const subscriberClient = redis.createClient(REDIS_URI);
+  subscriberClient = redis.createClient(REDIS_URI);
   subscriberClient.subscribe(REDIS_READ_CHANNEL);
-
-  startHealthcheckServer();
 
   subscriberClient.on('connect', () => {
     debug(`connected to redis ${REDIS_URI}.
@@ -80,8 +79,13 @@ const main = async () => {
   );
 }
 
-main()
-  .catch((error) => {
-    console.error(error);
-    closeConnectionsAndExit();
+startHealthcheckServer()
+  .then(main)
+  .catch(async (error:Error) => {
+    console.error(`Error: ${error.message}`);
+    closeConnectionsAndExit(subscriberClient, mongoClient);
+    closeConnectionsAndExit(publisherClient, mongoClient);
+    await stopHealthcheckServer();
+    process.exit(2);
   });
+

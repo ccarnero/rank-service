@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: candidates-ranker
+  # namespace: [environment]
+  labels:
+    app: candidates-ranker
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: candidates-ranker
+  template:
+    metadata:
+      labels:
+        app: candidates-ranker
+    spec:
+      containers:
+      - name: candidates-ranker
+        image: ranker/ranker
+        imagePullPolicy: Always
+        envFrom:
+        - secretRef:
+            name: candidates-ranker
+        ports:
+        - containerPort: 3000
+          name: http
+          protocol: TCP
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: candidates-ranker
+  # namespace: infra
+type: Opaque
+data:
+  # echo -n 3000 | base64
+  HEALTHCHECK_PORT: MzAwMA==
+  # echo -n verbose | base64
+  DEBUG: dmVyYm9zZQ==
+  # echo -n mongodb://mongodb-headless:27017/rankdb | base64
+  MONGODB_URI: bW9uZ29kYjovL21vbmdvZGItaGVhZGxlc3M6MjcwMTcvcmFua2Ri
+  # echo -n redis://redis-master:6379 | base64
+  REDIS_URI: cmVkaXM6Ly9yZWRpcy1tYXN0ZXI6NjM3OQ==
+  # echo -n ranker | base64
+  REDIS_READ_CHANNEL: cmFua2Vy
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: candidates-ranker
+  labels:
+    app: candidates-ranker
+spec:
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
+      name: http
+  selector:
+      app: candidates-ranker
+  type: ClusterIP

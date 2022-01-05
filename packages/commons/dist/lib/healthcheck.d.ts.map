@@ -1,1 +1,1 @@
-{"version":3,"file":"healthcheck.d.ts","sourceRoot":"","sources":["../../src/lib/healthcheck.ts"],"names":[],"mappings":"AAMA,QAAA,MAAM,sBAAsB,QAAa,QAAQ,IAAI,CAWpD,CAAA;AAED,OAAO,EAAE,sBAAsB,EAAE,CAAC"}
+{"version":3,"file":"healthcheck.d.ts","sourceRoot":"","sources":["../../src/lib/healthcheck.ts"],"names":[],"mappings":"AAAA,OAAgB,EAAW,eAAe,EAAyB,MAAM,SAAS,CAAA;AASlF,QAAA,MAAM,sBAAsB,QAAa,QAAQ,eAAe,CAY/D,CAAA;AAED,QAAA,MAAM,qBAAqB,QAAY,QAAQ,IAAI,CAGlD,CAAC;AAEF,OAAO,EAAE,sBAAsB,EAAE,qBAAqB,EAAE,CAAC"}

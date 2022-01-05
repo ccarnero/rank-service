@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: candidates-listenner
+  # namespace: [environment]
+  labels:
+    app: candidates-listenner
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: candidates-listenner
+  template:
+    metadata:
+      labels:
+        app: candidates-listenner
+    spec:
+      containers:
+      - name: candidates-listenner
+        image: ranker/listenner
+        imagePullPolicy: Always
+        envFrom:
+        - secretRef:
+            name: candidates-listenner
+        ports:
+        - containerPort: 3000
+          name: http
+          protocol: TCP
+      readinessProbe:
+        httpGet:
+            path: /healthcheck
+            port: 3000
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: candidates-listenner
+  # namespace: infra
+type: Opaque
+data:
+  # echo -n 3000 | base64
+  HEALTHCHECK_PORT: MzAwMA==
+  # echo -n verbose | base64
+  DEBUG: dmVyYm9zZQ==
+  # echo -n mongodb://mongodb-headless:27017/rankdb | base64
+  MONGODB_URI: bW9uZ29kYjovL21vbmdvZGItaGVhZGxlc3M6MjcwMTcvcmFua2Ri
+  # echo -n redis://redis-master:6379 | base64
+  REDIS_URI: cmVkaXM6Ly9yZWRpcy1tYXN0ZXI6NjM3OQ==
+  # echo -n candidates | base64
+  REDIS_PUSH_CHANNEL: Y2FuZGlkYXRlcw==
+  MONGODB_COLLECTION: Y2FuZGlkYXRlcw==
+  #echo -n testRank,age,experience,educationLevel,languages,professions,skills,fieldsOfStudy | base64
+  MONGODB_WATCH_PROPERTIES: dGVzdFJhbmssYWdlUmFuZ2UsZXhwZXJpZW5jZSxlZHVjYXRpb25MZXZlbCxsYW5ndWFnZXMscHJvZmVzc2lvbnMsc2tpbGxzLGZpZWxkc09mU3R1ZHk=
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: candidates-listenner
+  labels:
+    app: candidates-listenner
+spec:
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
+      name: http
+  selector:
+      app: candidates-listenner
+  type: ClusterIP
