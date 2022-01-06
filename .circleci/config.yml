@@ -11,4 +11,4 @@ jobs:
       - run: apt install -y python
       - run: apt install -y npm
       - run: npm install -g yarn
-      - run: ctlptl create cluster kind --registry=ctlptl-registry && test/test.sh
+      - run: ctlptl create cluster kind --registry=ctlptl-registry
