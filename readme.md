@@ -15,19 +15,19 @@ Some base articles:
 
 Run ./gitops/k3d-local.sh, this generates a cluster and its local registry, the output should look like this:
 
-\`\`\`
+```
 81...   registry:.   "..."   0.0.0.0:63333->5000/tcp   k3d-rank-registry
-\`\`\`
+```
 this shows the port assigned to the local registry, [for more info here](https://k3d.io/usage/guides/registries/)
 
 ## Build Docker images and upload them
 
 If necessary, correct the docker-compose.yml file and update the *image* attribute with the URL of the configured registry
 
-\`\`\`
+```
   listenner:
     image: k3d-rank-registry.localhost:63333/listenner:latest
-\`\`\`
+```
 
 Run the command *docker-compose build* to generate Docker images
 
@@ -35,9 +35,9 @@ Run the command *docker-compose push* to send the Docker images to the local reg
 
 ## And finally, to deploy the images to the Kubernetes cluster:
 
-\`\`\`
+```
 kubectl apply -f ./packages/SERVICE/gitops/candidates
-\`\`\`
+```
 
 where SERVICE can be: listenner/puller/ranker
 
@@ -45,9 +45,9 @@ where SERVICE can be: listenner/puller/ranker
 
 PS: in case you want to modify something you have to delete the k configuration manually by running
 
-\`\`\`
+```
 kubectl delete -f ./packages/SERVICE/gitops/candidates
-\`\`\`
+```
 
 **and GOTO to Build the...**
 
@@ -71,7 +71,7 @@ There are 2 generic and 2 specific evaluations:
 
 * between: evaluates that a value is in a range, applies to age and experience. If the value is within the range, it assigns a weight of 1, otherwise 0
 
-* intersection: evaluates set intersections (arrays), applies to professions, skills and fieldsOfStudy. Assigns a weight equal to the quotient between the total values required by the opportunity and the values possessed by the candidate [for example](https://bitbucket.org/worcket/rank-service/src/0b97ebef6af9ffb10116ba424099b900650ce846/packages/ranker/tests/intersection.test.ts#lines-34)
+* intersection: evaluates set intersections (arrays), applies to professions, skills and fieldsOfStudy. Assigns a weight equal to the quotient between the total values required by the opportunity and the values possessed by the candidate [for example](https://github.com/ccarnero/rank-service/blob/release/packages/ranker/tests/intersection.test.ts#L34)
 
 * educationLevel: evaluates the level of education, applies only to educationLevel. Assigns a weight of 1 if the candidate has a higher or equal level of education than the vacancy; 0 otherwise
 
@@ -79,13 +79,13 @@ There are 2 generic and 2 specific evaluations:
   * assigns 1 in case the language matches and the candidate's language level is GREATER or EQUAL to the required level
   * assigns 0.25 in case the language matches but the candidate's level is LOWER than the required level
   * otherwise assigns 0
-  * ... [the tests](https://bitbucket.org/worcket/rank-service/src/release/packages/ranker/tests/languagesLevel.test.ts) make it clearer
+  * ... [the tests](https://github.com/ccarnero/rank-service/blob/release/packages/ranker/tests/languagesLevel.test.ts) make it clearer
 
 ## configuration
 
 ALL services use the following environment variables:
 
-* MONGODB_URI: mongodb+srv://USER:PASSW@qa-tihwj.mongodb.net/wrckdb
+* MONGODB_URI: mongodb+srv://USER:PASSW@server.mongodb.net/wrckdb
 * REDIS_URI: redis://redis-bus:6379
 * HEALTHCHECK_PORT: 3000
 * DEBUG: verbose
