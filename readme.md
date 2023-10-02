@@ -1,117 +1,117 @@
-# Monorepo
+# Candidate rank
 
-Algunos articulos que sirvieron de base:
+Simple candidates for job ranker service that uses fp-ts and mongodb event stream
 
-* [este](https://baltuta.eu/posts/typescript-lerna-monorepo-the-setup)
-* [y este](https://medium.com/@NiGhTTraX/how-to-set-up-a-typescript-monorepo-with-lerna-c6acda7d4559)
 
-# Cluster de Kubernetes local:
-## Instalar k3d
+# Monorepo approach
 
-Ejecutar ./gitops/k3d-local.sh, esto genera un cluster y su registry local, el output deberia ser algo asi:
+Some base articles:
 
-```
+* [this one](https://baltuta.eu/posts/typescript-lerna-monorepo-the-setup)
+* [and this](https://medium.com/@NiGhTTraX/how-to-set-up-a-typescript-monorepo-with-lerna-c6acda7d4559)
+
+# Local Kubernetes Cluster:
+## Install k3d
+
+Run ./gitops/k3d-local.sh, this generates a cluster and its local registry, the output should look like this:
+
+\`\`\`
 81...   registry:.   "..."   0.0.0.0:63333->5000/tcp   k3d-rank-registry
-```
-eso muestra el puerto asignado a la registry local, [para mas info aca](https://k3d.io/usage/guides/registries/)
+\`\`\`
+this shows the port assigned to the local registry, [for more info here](https://k3d.io/usage/guides/registries/)
 
-## Buildear las imagenes de docker y subirlas
+## Build Docker images and upload them
 
-Si es necesario, corregir el archivo docker-compose.yml y actualizar el atributo *image* con la url de la registry configurada
+If necessary, correct the docker-compose.yml file and update the *image* attribute with the URL of the configured registry
 
-```
+\`\`\`
   listenner:
     image: k3d-rank-registry.localhost:63333/listenner:latest
+\`\`\`
 
-```
+Run the command *docker-compose build* to generate Docker images
 
-Ejecutar el comando *docker-compose build* para generar las imagenes de docker
+Run the command *docker-compose push* to send the Docker images to the local registry
 
-Ejecutar el comando *docker-compose push* para enviar las imagenes de docker al registry local
+## And finally, to deploy the images to the Kubernetes cluster:
 
-## y finalmente para enviar las imgs al cluster de kubernetes:
+\`\`\`
+kubectl apply -f ./packages/SERVICE/gitops/candidates
+\`\`\`
 
-```
-kubectl apply -f ./packages/SERVICIO/gitops/candidates
-```
+where SERVICE can be: listenner/puller/ranker
 
-donde SERVICIO puede ser: listenner/puller/ranker
+... with that we should be set
 
-... con eso deberiamos estar
+PS: in case you want to modify something you have to delete the k configuration manually by running
 
-PD: en caso que se quiera modificar algo hay que borrar la config de k a mano ejecutando 
+\`\`\`
+kubectl delete -f ./packages/SERVICE/gitops/candidates
+\`\`\`
 
-```
-kubectl delete -f ./packages/SERVICIO/gitops/candidates
-```
+**and GOTO to Build the...**
 
-**y GOTO a Buildear las...**
+# Service Architecture
 
-# Arquitectura del servicio
+[This diagram](https://docs.google.com/drawings/d/1NnUBD5uDL-B5rHRX46Q4ml0Rd1yNSC489tuDKOocsjE/edit?usp=sharing)
 
-[Este grafico](https://docs.google.com/drawings/d/1NnUBD5uDL-B5rHRX46Q4ml0Rd1yNSC489tuDKOocsjE/edit?usp=sharing)
-
-La solucion se divide en 3 servicios con las siguientes responsabilidades:
+The solution is divided into 3 services with the following responsibilities:
 
 ## listenner
 
-Reacciona a cambios en las colecciones de candidates/opportunities; cada ves que se modifican cualquiera de las propiedades del documento que afectan al rank reacciona y deposita un mensaje en una channel de Redis asociado
+Reacts to changes in the candidates/opportunities collections; every time any of the document properties affecting the rank are modified, it reacts and drops a message into an associated Redis channel
 
 ## puller
 
-reacciona cuando se almacena un mensaje en el canal de Redis asociado a cada cambio. Es el encargado de ejecutar las agregaciones de MongoDB necesarias para obtener las tuplas (candidato, oportunidad) con los valores de las propiedades necesarias para calcular el rank; una ves que obtuvo esta informacion lo envia al channel de Redis asociado al servicio de Rank
+reacts when a message is stored in the associated Redis channel for each change. It is responsible for running the necessary MongoDB aggregations to obtain the tuples (candidate, opportunity) with the values of the necessary properties to calculate the rank; once it has obtained this information it sends it to the Redis channel associated with the Rank service
 
 ## ranker
 
-Existen 2 evaluaciones genericas y 2 particulares:
+There are 2 generic and 2 specific evaluations:
 
-* between: evalua que un valor este en un rango, aplica a agey experience. Si el valor esta en el rango asigna un peso de 1, caso contrario 0
+* between: evaluates that a value is in a range, applies to age and experience. If the value is within the range, it assigns a weight of 1, otherwise 0
 
-* intersection: evalua intersecciones de conjuntos (arrays), aplica a professions, skills y fieldsOfStudy. Asigna un peso igual al cociente entre el total de los valores requeridos por la oportunidad y los valores que posee el candidato [por ejemplo](https://bitbucket.org/worcket/rank-service/src/0b97ebef6af9ffb10116ba424099b900650ce846/packages/ranker/tests/intersection.test.ts#lines-34)
+* intersection: evaluates set intersections (arrays), applies to professions, skills and fieldsOfStudy. Assigns a weight equal to the quotient between the total values required by the opportunity and the values possessed by the candidate [for example](https://bitbucket.org/worcket/rank-service/src/0b97ebef6af9ffb10116ba424099b900650ce846/packages/ranker/tests/intersection.test.ts#lines-34)
 
-* educationLevel: evalua el nivel de educacion, aplica solo a educationLevel. Asigna un peso de 1 en caso que el candidato tenga un nivel de educacion mayor o igual que la vacante; 0 en caso contrario
+* educationLevel: evaluates the level of education, applies only to educationLevel. Assigns a weight of 1 if the candidate has a higher or equal level of education than the vacancy; 0 otherwise
 
-* languagesLevel evalua los idiomas, aplica solo a languagesLevel. Asigna un peso igual al cociente entre el total de los valores requeridos por la oportunidad y los valores que posee el candidato aplicando la siguiente logica:
-* * asigna 1 en caso que coincida el idioma y el nivel de idioma del candidato sea MAYOR o IGUAL al nivel requerido
-* * asigna 0.25 en caso que coincida el idioma pero el nivel del candidato sea MENOR  al nivel requerido
-* * caso contrario asigna 0 
-* * ... [los tests](https://bitbucket.org/worcket/rank-service/src/release/packages/ranker/tests/languagesLevel.test.ts) lo dejan mas claro
+* languagesLevel evaluates languages, applies only to languagesLevel. Assigns a weight equal to the quotient between the total values required by the opportunity and the values possessed by the candidate using the following logic:
+  * assigns 1 in case the language matches and the candidate's language level is GREATER or EQUAL to the required level
+  * assigns 0.25 in case the language matches but the candidate's level is LOWER than the required level
+  * otherwise assigns 0
+  * ... [the tests](https://bitbucket.org/worcket/rank-service/src/release/packages/ranker/tests/languagesLevel.test.ts) make it clearer
 
-## configuracion
+## configuration
 
-TODOS los servicios utilizan las siguientes variables de entorno:
+ALL services use the following environment variables:
 
 * MONGODB_URI: mongodb+srv://USER:PASSW@qa-tihwj.mongodb.net/wrckdb
 * REDIS_URI: redis://redis-bus:6379
 * HEALTHCHECK_PORT: 3000
 * DEBUG: verbose
 
-las variables de entorno particulares para cada servicio se describen a continuacion:
+the specific environment variables for each service are described below:
 
-La configuracion del servicio **listenner** para detectar cabios en **candidates** es la siguiente:
+The **listenner** service configuration for detecting changes in **candidates** is as follows:
   * MONGODB_COLLECTION: candidates
   * REDIS_PUSH_CHANNEL: candidates
   * MONGODB_WATCH_PROPERTIES: age,experience,educationLevel,languages,professions,skills,fieldsOfStudy
-  
-La configuracion del servicio **listenner** para detectar cabios en **opportunities** es la siguiente:
+
+The **listenner** service configuration for detecting changes in **opportunities** is as follows:
   * MONGODB_COLLECTION: opportunities
   * REDIS_PUSH_CHANNEL: opportunities
   * MONGODB_WATCH_PROPERTIES: ageRange,experienceRange,educationLevelsAdvanced,languages,professions,skillsReq,fieldsOfStudy
 
-La configuracion del servicio **puller** para detectar cabios en **candidates** es la siguiente:
+The **puller** service configuration for detecting changes in **candidates** is as follows:
   * REDIS_READ_CHANNEL: candidates
   * REDIS_PUSH_CHANNEL: ranker
-  
-La configuracion del servicio **puller** para detectar cabios en **opportunities** es la siguiente:
+
+The **puller** service configuration for detecting changes in **opportunities** is as follows:
   * REDIS_READ_CHANNEL: opportunities
   * REDIS_PUSH_CHANNEL: ranker
-  
-## deploy y flow de datos
 
-Como lo muestra la configuracion, listenner y puller deben ser configurados para trabajar con candidatos o con opportunidades, ranker en cambio, es generico
+## deploy and data flow
 
-[el siguiente diagrama muestra cual es el deployment](https://docs.google.com/drawings/d/1pjgPm0DxWJIIcslw2aX4SvNESYhvPJApu2zsKwrg_xc/edit?usp=sharing)
+As shown by the configuration, listenner and puller must be configured to work with candidates or opportunities, ranker on the other hand, is generic
 
-
-
-  
+[the following diagram shows what the deployment is](https://docs.google.com/drawings/d/1pjgPm0DxWJIIcslw2aX4SvNESYhvPJApu2zsKwrg_xc/edit?usp=sharing)
