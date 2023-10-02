@@ -1,4 +1,4 @@
-# Candidate rank
+# Candidates ranker service
 
 Simple candidates for job ranker service that uses fp-ts and mongodb event stream
 
