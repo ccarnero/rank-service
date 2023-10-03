@@ -53,7 +53,7 @@ kubectl delete -f ./packages/SERVICE/gitops/candidates
 
 # Service Architecture
 
-[This diagram](https://docs.google.com/drawings/d/1NnUBD5uDL-B5rHRX46Q4ml0Rd1yNSC489tuDKOocsjE/edit?usp=sharing)
+[This diagram](./design.jpg)
 
 The solution is divided into 3 services with the following responsibilities:
 
