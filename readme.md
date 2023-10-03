@@ -2,54 +2,12 @@
 
 Simple candidates for job ranker service that uses fp-ts and mongodb event stream
 
+## deploy and data flow
 
-# Monorepo approach
+As shown by the configuration, listenner and puller must be configured to work with candidates or opportunities, ranker on the other hand, is generic
 
-Some base articles:
+[the following diagram shows what the deployment is](./flow.jpg)
 
-* [this one](https://baltuta.eu/posts/typescript-lerna-monorepo-the-setup)
-* [and this](https://medium.com/@NiGhTTraX/how-to-set-up-a-typescript-monorepo-with-lerna-c6acda7d4559)
-
-# Local Kubernetes Cluster:
-## Install k3d
-
-Run ./gitops/k3d-local.sh, this generates a cluster and its local registry, the output should look like this:
-
-```
-81...   registry:.   "..."   0.0.0.0:63333->5000/tcp   k3d-rank-registry
-```
-this shows the port assigned to the local registry, [for more info here](https://k3d.io/usage/guides/registries/)
-
-## Build Docker images and upload them
-
-If necessary, correct the docker-compose.yml file and update the *image* attribute with the URL of the configured registry
-
-```
-  listenner:
-    image: k3d-rank-registry.localhost:63333/listenner:latest
-```
-
-Run the command *docker-compose build* to generate Docker images
-
-Run the command *docker-compose push* to send the Docker images to the local registry
-
-## And finally, to deploy the images to the Kubernetes cluster:
-
-```
-kubectl apply -f ./packages/SERVICE/gitops/candidates
-```
-
-where SERVICE can be: listenner/puller/ranker
-
-... with that we should be set
-
-PS: in case you want to modify something you have to delete the k configuration manually by running
-
-```
-kubectl delete -f ./packages/SERVICE/gitops/candidates
-```
-
-**and GOTO to Build the...**
 
 # Service Architecture
 
@@ -110,8 +68,51 @@ The **puller** service configuration for detecting changes in **opportunities** 
   * REDIS_READ_CHANNEL: opportunities
   * REDIS_PUSH_CHANNEL: ranker
 
-## deploy and data flow
 
-As shown by the configuration, listenner and puller must be configured to work with candidates or opportunities, ranker on the other hand, is generic
+# Monorepo approach
 
-[the following diagram shows what the deployment is](https://docs.google.com/drawings/d/1pjgPm0DxWJIIcslw2aX4SvNESYhvPJApu2zsKwrg_xc/edit?usp=sharing)
+Some base articles:
+
+* [this one](https://baltuta.eu/posts/typescript-lerna-monorepo-the-setup)
+* [and this](https://medium.com/@NiGhTTraX/how-to-set-up-a-typescript-monorepo-with-lerna-c6acda7d4559)
+
+# Local Kubernetes Cluster:
+## Install k3d
+
+Run ./gitops/k3d-local.sh, this generates a cluster and its local registry, the output should look like this:
+
+```
+81...   registry:.   "..."   0.0.0.0:63333->5000/tcp   k3d-rank-registry
+```
+this shows the port assigned to the local registry, [for more info here](https://k3d.io/usage/guides/registries/)
+
+## Build Docker images and upload them
+
+If necessary, correct the docker-compose.yml file and update the *image* attribute with the URL of the configured registry
+
+```
+  listenner:
+    image: k3d-rank-registry.localhost:63333/listenner:latest
+```
+
+Run the command *docker-compose build* to generate Docker images
+
+Run the command *docker-compose push* to send the Docker images to the local registry
+
+## And finally, to deploy the images to the Kubernetes cluster:
+
+```
+kubectl apply -f ./packages/SERVICE/gitops/candidates
+```
+
+where SERVICE can be: listenner/puller/ranker
+
+... with that we should be set
+
+PS: in case you want to modify something you have to delete the k configuration manually by running
+
+```
+kubectl delete -f ./packages/SERVICE/gitops/candidates
+```
+
+**and GOTO to Build the...**
